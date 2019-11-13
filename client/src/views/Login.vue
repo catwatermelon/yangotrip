@@ -80,7 +80,7 @@ export default {
                     const userinfo = res.data.data;
                     //将通过token请求的用户信息存到vuex中
                     userinfo && this.$store.dispatch('user/LOGIN',{
-                        accountNumber: userinfo.accountNumber,
+                        accountNumber: userinfo.username,
                         password: userinfo.password
                     })
                     // console.log(this.$store.state.user.isLogin)

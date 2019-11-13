@@ -32,7 +32,7 @@ app.use(bodyParser());
 
 
 const Location = require("./src/model/location").Location;
-const User = require("./src/model/user").User;
+const User = require("./src/model/user").User2;
 
 app.keys = ['some secret hurr'];
 
@@ -127,7 +127,7 @@ router.post('/register', async(ctx)=>{
 
     await User.findOne({
         where: {
-            accountNumber
+            username: accountNumber
         }
     }).then(res=>{
         if(!res){   //如果不存在说明还没有注册过
@@ -137,7 +137,7 @@ router.post('/register', async(ctx)=>{
     })
     if(!status){
         const result = await User.create({
-            accountNumber,
+            username: accountNumber,
             password
         })
         return ctx.body = {
@@ -164,7 +164,7 @@ router.post('/login', async(ctx)=>{
 
     await User.findOne({
         where: {
-            accountNumber: accountNumber,
+            username: accountNumber,
             password: PSW
         }
     }).then(res=>{
@@ -204,7 +204,7 @@ router.get('/userInfo',async (ctx)=>{
     //根据解析到的token向数据库进行请求数据
     const result = await User.findOne({
         where: {
-            accountNumber: userinfo.accountNumber,
+            username: userinfo.accountNumber,
             password: PSW
         }
     }).then(res=>{
@@ -228,6 +228,13 @@ router.get('/location',async (ctx)=>{
         return ctx.body = res;
     })
 })
+
+// router.get('/getToken', async(ctx)=>{
+//     axios.get('https://openapi.baidu.com/oauth/2.0/token?grant_type=client_credentials&client_id=3zsSffY5Spfjcn8bbZfzrMxR&client_secret=LbSz1dVHV8HFutnIM1NpL57sgy0hNIL0')
+//     .then(res=>{
+//         console.log(res.data.access_token);
+//     })
+// })
 
 app.use(router.routes());
 

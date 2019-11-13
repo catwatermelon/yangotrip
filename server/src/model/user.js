@@ -2,12 +2,12 @@ const sequelize = require("../config/db").sequelize
 const Sequelize = require("../config/db").Sequelize
 const crypto  = require("crypto")
 
-var user = sequelize.define('user',{
+var user = sequelize.define('user2',{
     id: {
         type: Sequelize.NUMBER,
         primaryKey: true
     },
-    accountNumber: {
+    username: {
         type: Sequelize.STRING(11)
     },
     password: {
@@ -21,9 +21,9 @@ var user = sequelize.define('user',{
     },
   }, {
     timestamps: false,
-    tableName: 'user'
+    tableName: 'user2'
 });
 
 
 
-module.exports.User = user;
+module.exports.User2 = user;
