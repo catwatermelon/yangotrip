@@ -48,6 +48,8 @@
 
 <script>
 import Scroll from '../components/Scroll.vue'
+import { Toast } from 'mand-mobile'
+
 export default {
   name: 'home',
   data () {
@@ -359,25 +361,41 @@ export default {
           //  定位按钮的排放位置,  RB表示右下
           buttonPosition: 'RB',
           showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
-          // showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
-          panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+          showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+          panToLocation: false,     //定位成功后将定位到的位置作为地图中心点，默认：true
         });
         that.map.addControl(that.geolocation);
-        that.geolocation.watchPosition((status,result)=>{
-          console.log(status, result)
-          if(status=='complete'){
-            // userCurrentPosition
-            console.log(result)
-            // console.log(result.formattedAddress)
-            that.start.startPos = result.formattedAddress;
-            // that.start.startPos.lat = result.position.formattedAddress;
-            // console.log(result.position)
-            const position = result.position;
-            that.start.lnglat = [];
-            that.start.lnglat.push(position.lng);
-            that.start.lnglat.push(position.lat);
-            that.map.setCenter(new AMap.LngLat(that.start.lnglat[0], that.start.lnglat[1]));
+        var timer = null;
+        function clearLocationInterval(){
+          if(timer!=null) clearInterval(timer)
+          timer = null;
+        }
+         
+          function startLocation(){
+              // that.geolocation.getCurrentPosition((status,result)=>{
+              //   if(status=='complete'){
+              //     console.log(result)
+              //     // Toast.succeed(result);
+              //     // console.log(result.formattedAddress)
+              //     // that.start.startPos = result.formattedAddress;
+              //     // const position = result.position;
+              //     // that.start.lnglat = [];
+              //     // that.start.lnglat.push(position.lng);
+              //     // that.start.lnglat.push(position.lat);
+              //     // that.map.setCenter(new AMap.LngLat(that.start.lnglat[0], that.start.lnglat[1]));
+              //   }
+              // })
+              // if(timer != null) return;
+              that.geolocation.getCurrentPosition();
           }
+          that.map.on('dragstart', clearLocationInterval);
+          that.map.on('dragging', clearLocationInterval);
+          that.map.on('dragend', clearLocationInterval);
+          
+          
+        that.geolocation.on('complete', function(){
+          if(!timer)
+            timer = setInterval(startLocation, 3000);
         })
     })
   },
@@ -487,6 +505,7 @@ export default {
 }
 
 .candidatesWrapper {
+  
   background-color: rgba(255, 254, 254, 0.05);
 }
 

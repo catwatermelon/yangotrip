@@ -24,8 +24,8 @@ export default {
     data(){
         return {
             items: [
-                { label: '帮助', icon: 'question' },
-                { label: '设置', icon: 'setting' },
+                // { label: '帮助', icon: 'question' },
+                // { label: '设置', icon: 'setting' },
                 { label: '退出', icon: 'close'}
             ]
         }
