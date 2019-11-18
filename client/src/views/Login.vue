@@ -113,7 +113,6 @@ export default {
     width: 100%;
     display: flex;
     flex-direction: column;
-    // padding-top: 2rem;
     /* justify-content:  center; */
     align-items: center;
     box-sizing: border-box;
@@ -204,8 +203,9 @@ export default {
 }
 .captchaText {
     height: 100%;
+    border-radius: 5px;
+    overflow: hidden;
     border: 1px solid rgb(236, 121, 121);
-    // overflow: auto;
     vertical-align: middle!important;
     padding: 0!important;
     margin: 0!important;
