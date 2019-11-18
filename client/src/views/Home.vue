@@ -14,6 +14,14 @@
           <div class="candidatesWrapper">
               <p style="padding: 6px 0;" v-for="location in filterList" :key="location.id" @click="confirmLocation(location)">{{location.address}}</p>
           </div>
+          <!-- <div class="candidatesWrapper">
+              <scroll-view class="scrollWrapper" >
+                <div>
+                  <p style="padding: 6px 0;" v-for="location in filterList" :key="location.id" @click="confirmLocation(location)">{{location.address}}</p>
+
+                </div>
+              </scroll-view>
+          </div> -->
         </div>
         <div class="toggleButtonWrapper">
             <md-icon
@@ -33,6 +41,9 @@
             </div>   
         </transition>
         <div id="mapContainer"></div>
+        <div @click="getLocation" style="position: absolute; border: 1px solid grey; height: 36px;width:36px; background:white; display:flex; margin: 0 auto; align-items:center;justify-content:center; z-index: 9999;bottom: 4.5rem;right:.9rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 1024 1024" width="28" height="28" t="1574066110456" p-id="3733" version="1.1"><path fill="#2c2c2c" d="M 403.89 579.833 h 216.218 L 511.999 687.915 L 403.89 579.833 Z M 512 64.304 c -134.871 0 -244.198 109.327 -244.198 244.197 c 0 134.872 109.327 244.199 244.197 244.199 s 244.2 -109.327 244.2 -244.199 c 0 -134.87 -109.329 -244.197 -244.2 -244.197 Z m 0 434.129 c -104.903 0 -189.932 -85.03 -189.932 -189.932 c 0 -104.902 85.03 -189.93 189.931 -189.93 c 104.876 0 189.932 85.03 189.932 189.93 c 0 104.903 -85.056 189.932 -189.932 189.932 Z" p-id="3734" /><path fill="#2c2c2c" d="M 512 199.968 c 59.936 0 108.532 48.596 108.532 108.533 c 0 59.937 -48.595 108.533 -108.533 108.533 S 403.467 368.44 403.467 308.501 c 0 -59.936 48.596 -108.533 108.532 -108.533 Z M 874.586 742.648 c 28.392 -20.357 44.41 -43.418 44.41 -67.85 c 0 -62.813 -105.923 -116.523 -255.83 -138.518 c -0.431 0.287 -0.865 0.57 -1.298 0.853 c 119.86 19.502 202.861 61.655 202.861 110.534 c 0 23.025 -18.423 44.56 -50.428 62.94 c -60.807 -24.702 -143.834 -41.914 -237.528 -47.414 l -0.116 0.116 c 95.09 6.1 176.794 25.397 228.646 52.197 c -63.279 32.716 -171.018 54.259 -293.304 54.259 c -122.285 0 -230.023 -21.543 -293.303 -54.26 c 51.853 -26.798 133.556 -46.096 228.646 -52.196 l -0.117 -0.116 c -93.695 5.5 -176.72 22.712 -237.528 47.414 c -32.006 -18.38 -50.428 -39.915 -50.428 -62.94 c 0 -48.88 83.001 -91.032 202.86 -110.534 c -0.432 -0.283 -0.866 -0.566 -1.296 -0.853 c -149.908 21.995 -255.831 75.705 -255.831 138.519 c 0 24.431 16.018 47.492 44.41 67.85 c -28.391 20.342 -44.41 43.39 -44.41 67.816 c 0 82.405 182.221 149.231 406.997 149.231 s 406.998 -66.826 406.998 -149.231 c -0.001 -24.426 -16.02 -47.474 -44.411 -67.817 Z M 511.999 905.431 c -194.806 0 -352.73 -54.664 -352.73 -122.1 c 0 -9.738 3.314 -19.207 9.538 -28.286 c 72.295 41.48 198.985 68.986 343.191 68.986 s 270.898 -27.507 343.193 -68.986 c 6.224 9.08 9.538 18.548 9.538 28.287 c 0.001 67.435 -157.923 122.099 -352.73 122.099 Z" p-id="3735" /></svg>  
+        </div>
         <div class="navigation">
             <div id="maincate" class="maincate" >
                 <div v-for="(item, index) in items" :key="index" @click="GenerateMarkers(item.content, index)">
@@ -108,7 +119,8 @@ export default {
       endMarker: null,
       geolocation: null,
       currentShowMarkerGroup: 0,
-      userCurrentPosition: ""
+      userCurrentPosition: "",
+      locationTimer: null
     }
   },
   computed: {
@@ -336,6 +348,34 @@ export default {
     },
     closeInfoWindow() {
       this.map.clearInfoWindow();
+    },
+    getLocation(){
+      const that = this;
+      if(this.locationTimer) {
+        // console.log("删除定时器")
+        clearInterval(this.locationTimer);
+      }
+      that.geolocation.getCurrentPosition((status,result)=>{
+        if(status=='complete'){
+          // console.log(result)
+          // Toast.succeed(result);
+          // console.log(result.formattedAddress)
+          // that.start.startPos = result.formattedAddress;
+          const position = result.position;
+          that.start.lnglat = [];
+          that.start.lnglat.push(position.lng);
+          that.start.lnglat.push(position.lat);
+          that.map.setCenter(new AMap.LngLat(that.start.lnglat[0], that.start.lnglat[1]));
+       }
+      })
+      this.locationTimer = setInterval(startLocation, 3000);
+      function startLocation(){
+        that.geolocation.getCurrentPosition((status,result)=>{
+          if(status=='complete'){
+            console.log(result)
+          }
+        })
+      }
     }
   },
   mounted(){
@@ -344,59 +384,19 @@ export default {
         center: [119.448084,26.00394],
         zoom: 16
     });
-    AMap.plugin(['AMap.ToolBar','AMap.Geolocation'],function(){//异步加载插件
-        var toolbar = new AMap.ToolBar({
-          offset:new AMap.Pixel(10, 160),
-        });
-        that.map.addControl(toolbar);
+    AMap.plugin(['AMap.Geolocation'],function(){//异步加载插件
         that.geolocation = new AMap.Geolocation({
-          // 是否使用高精度定位，默认：true
-          enableHighAccuracy: true,
-          // 设置定位超时时间，默认：无穷大
-          timeout: 10000,
-          // 定位按钮的停靠位置的偏移量，默认：Pixel(10, 20)
-          buttonOffset: new AMap.Pixel(14, 170),
-          //  定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-          zoomToAccuracy: true,     
-          //  定位按钮的排放位置,  RB表示右下
-          buttonPosition: 'RB',
-          showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
-          showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
-          panToLocation: false,     //定位成功后将定位到的位置作为地图中心点，默认：true
-        });
-        that.map.addControl(that.geolocation);
-        var timer = null;
-        function clearLocationInterval(){
-          if(timer!=null) clearInterval(timer)
-          timer = null;
-        }
-         
-          function startLocation(){
-              // that.geolocation.getCurrentPosition((status,result)=>{
-              //   if(status=='complete'){
-              //     console.log(result)
-              //     // Toast.succeed(result);
-              //     // console.log(result.formattedAddress)
-              //     // that.start.startPos = result.formattedAddress;
-              //     // const position = result.position;
-              //     // that.start.lnglat = [];
-              //     // that.start.lnglat.push(position.lng);
-              //     // that.start.lnglat.push(position.lat);
-              //     // that.map.setCenter(new AMap.LngLat(that.start.lnglat[0], that.start.lnglat[1]));
-              //   }
-              // })
-              // if(timer != null) return;
-              that.geolocation.getCurrentPosition();
-          }
-          that.map.on('dragstart', clearLocationInterval);
-          that.map.on('dragging', clearLocationInterval);
-          that.map.on('dragend', clearLocationInterval);
-          
-          
-        that.geolocation.on('complete', function(){
-          if(!timer)
-            timer = setInterval(startLocation, 3000);
-        })
+        // 是否使用高精度定位，默认：true
+        enableHighAccuracy: true,
+        // 设置定位超时时间，默认：无穷大
+        timeout: 10000,
+        //  定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+        zoomToAccuracy: true,     
+        showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+        showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+        panToLocation: false,     //定位成功后将定位到的位置作为地图中心点，默认：true
+      });
+      // that.map.addControl(that.geolocation);
     })
   },
   created(){
@@ -505,7 +505,7 @@ export default {
 }
 
 .candidatesWrapper {
-  
+  /* position: absolute; */
   background-color: rgba(255, 254, 254, 0.05);
 }
 
@@ -581,14 +581,6 @@ export default {
   margin: 0 0.625rem;
   padding: 2px 0.625rem;
 }
-/* 
-.has-flex-direction>img {
-  height: 32px;
-  width: 32px;
-  margin-bottom: -43px;
-  box-sizing: border-box;
-} */
-
 .maincate::-webkit-scrollbar {
   display: none;
 }
@@ -669,9 +661,6 @@ div.info-top span {
 
 .info-middle img {
   height: 12.5rem;
-  /* height: 50%; */
-  /* width: 100%; */
-  /* max-width: 100%; */
 }
 .marker-group-lightheight {
   background-color: rgb(165, 165, 247);
