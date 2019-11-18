@@ -1,6 +1,6 @@
 
 const state = {
-    accountNumber: '',
+    username: '',
     password: '',
     isLogin: false
 }
@@ -9,7 +9,7 @@ const state = {
 
 const getters = { 
     getAccountNumber: (state)=>{
-        return state.accountNumber;
+        return state.username;
     },
     getPassword: (state)=>{
         return state.password;
@@ -18,7 +18,7 @@ const getters = {
 
 const mutations =  { 
     SET_ACCOUNT_NUMBER(state, accountNumber){
-        state.accountNumber = accountNumber;
+        state.username = accountNumber;
     },
     SET_PASSWORD(state, password){
         state.password = password;
@@ -42,7 +42,7 @@ const mutations =  {
 const actions = { 
     LOGIN({ commit, state }, payload){
         state.isLogin = true;
-        commit('SET_ACCOUNT_NUMBER', payload.accountNumber)
+        commit('SET_ACCOUNT_NUMBER', payload.username)
         commit('SET_PASSWORD', payload.password)
         // console.log(state.accountNumber, state.password)
     },

@@ -170,7 +170,7 @@ router.post('/login', async(ctx)=>{
     }).then(res=>{
         if(res){
         const token = jwt.sign({
-                accountNumber,
+                username: accountNumber,
                 password
             }, 
             SECRET,
@@ -204,7 +204,7 @@ router.get('/userInfo',async (ctx)=>{
     //根据解析到的token向数据库进行请求数据
     const result = await User.findOne({
         where: {
-            username: userinfo.accountNumber,
+            username: userinfo.username,
             password: PSW
         }
     }).then(res=>{

@@ -14,7 +14,7 @@
                 <div class="form-group">
                     <input v-model="password" type="password" name="password" id="password" placeholder="请输入密码">
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="height: 3.215rem">
                     <div class="captchaText" v-html="captchaImgHtml" @click="getCaptcha"></div>
                     <input v-model="inputCaptcha" class="captchaIpt" type="text" name="" id="" placeholder="请输入4位验证码">
                 </div>
@@ -78,9 +78,10 @@ export default {
             this.$axios.get('/api/userInfo').then(res=>{
                 if(res.data.status) {
                     const userinfo = res.data.data;
+                    // console.log(userinfo)
                     //将通过token请求的用户信息存到vuex中
                     userinfo && this.$store.dispatch('user/LOGIN',{
-                        accountNumber: userinfo.username,
+                        username: userinfo.username,
                         password: userinfo.password
                     })
                     // console.log(this.$store.state.user.isLogin)
@@ -112,13 +113,15 @@ export default {
     width: 100%;
     display: flex;
     flex-direction: column;
-    padding-top: 2rem;
+    // padding-top: 2rem;
     /* justify-content:  center; */
     align-items: center;
     box-sizing: border-box;
+    position: relative;
 }
 
 .login .formContainer {
+    padding-top: 18.2rem;
     width: 90%;
 }
 .login form {
@@ -171,10 +174,11 @@ export default {
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    margin-bottom: 2rem;
+    position: absolute;
+    top: 2rem;
 }
 .login .logoWrapper img {
-    height: 13rem; 
+    height: 12.7rem; 
     font-size: 0; 
 }
 .login .quoto {
@@ -193,13 +197,15 @@ export default {
     font-size: 1rem;
     text-indent: .5rem;
     border: 1px solid rgb(236, 121, 121);
+    height: 100%;
     flex: 1;
     border-radius: 5px;
     margin-left: .2rem;
 }
 .captchaText {
-    height: 3.215rem;
-    overflow: auto;
+    height: 100%;
+    border: 1px solid rgb(236, 121, 121);
+    // overflow: auto;
     vertical-align: middle!important;
     padding: 0!important;
     margin: 0!important;

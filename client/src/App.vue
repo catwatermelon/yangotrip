@@ -9,12 +9,11 @@ export default {
   name: 'App',
   created(){
     this.$axios.get('/api/userInfo').then(res=>{
-        // console.log(res.data.status);
         if(res.data.status) {
             const userinfo = res.data.data;
             //将通过token请求的用户信息存到vuex中
             this.$store.dispatch('user/LOGIN',{
-                accountNumber: userinfo.accountNumber,
+                username: userinfo.username,
                 password: userinfo.password
             })
         }
